@@ -59,7 +59,7 @@ jobs:
             uses: actions/checkout@v5
 
           - name: Setup Terraform
-            uses: hashicorp/setup-terraform@v3
+            uses: hashicorp/setup-terraform@v4
             with:
               terraform_version: ${{ env.TF_Version }}
               terraform_wrapper: true
@@ -116,7 +116,7 @@ jobs:
             uses: actions/checkout@v5
 
           - name: Setup Terraform
-            uses: hashicorp/setup-terraform@v3
+            uses: hashicorp/setup-terraform@v4
             with:
               terraform_version: ${{ env.TF_Version }}
               terraform_wrapper: true
@@ -205,7 +205,7 @@ jobs:
             uses: actions/checkout@v5
 
           - name: Setup Terraform
-            uses: hashicorp/setup-terraform@v3
+            uses: hashicorp/setup-terraform@v4
             with:
               terraform_version: ${{ env.TF_Version }}
               terraform_wrapper: true

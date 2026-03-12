@@ -1,5 +1,5 @@
 module "aws_s3_bucket" {
-  source = "git::https://github.com/ochirdorj/infra-core-storage-s3-bucket-template.git?ref=067a83860ef5f0782a8171e72e4702333dc23ae7"
+  source = "git::https://github.com/ochirdorj/infra-core-storage-s3-bucket-template.git?ref=b58b3848a563dc1ee67dda51200e6ef995a79029"
 ##input variables##
 enable_logging = true
 bucket_name = "sandbox-use1-ap13-s3-testing-example"

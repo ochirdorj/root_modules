@@ -75,7 +75,7 @@ jobs:
                 terraform-${{ runner.os }}-
           
           - name: Configure AWS Credentials   # ← add this
-            uses: aws-actions/configure-aws-credentials@v4
+            uses: aws-actions/configure-aws-credentials@v5
             with:
               role-to-assume: ${{ secrets.AWS_PROD_ROLE_ARN }}
               aws-region: ${{ secrets.AWS_REGION }}
@@ -132,7 +132,7 @@ jobs:
                 terraform-${{ runner.os }}-
 
           - name: Configure AWS Credentials (Prod)
-            uses: aws-actions/configure-aws-credentials@v4
+            uses: aws-actions/configure-aws-credentials@v5
             with:
               role-to-assume: ${{ secrets.AWS_PROD_ROLE_ARN }}
               aws-region: ${{ secrets.AWS_REGION }}
@@ -221,7 +221,7 @@ jobs:
                 terraform-${{ runner.os }}-
 
           - name: Configure AWS Credentials (Prod)
-            uses: aws-actions/configure-aws-credentials@v4
+            uses: aws-actions/configure-aws-credentials@v5
             with:
               role-to-assume: ${{ secrets.AWS_PROD_ROLE_ARN }}
               aws-region: ${{ secrets.AWS_REGION }}

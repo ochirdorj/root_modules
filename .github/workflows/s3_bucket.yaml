@@ -27,7 +27,6 @@ permissions:
   contents: read
   pull-requests: write
   id-token: write
-  security-events: write
   actions: read
 
 jobs:
@@ -49,8 +48,6 @@ jobs:
             with:
               directory: ${{ env.TF_Working_Dir }}
               framework: terraform
-              output_format: sarif
-              output_file_path: checkov.sarif
               soft_fail: false
               skip_check: CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19
           

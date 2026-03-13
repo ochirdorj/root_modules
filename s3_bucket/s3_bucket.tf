@@ -32,6 +32,6 @@ transfer_acceleration = "Enabled"
 website_enable = true
 key_prefix_equals = "docs/"
 replace_key_prefix_with = "documents/"
-enable_relication = false
+enable_replication                 = false
 replication_destination_bucket_arn = ""
 }

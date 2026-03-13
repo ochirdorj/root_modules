@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   terraform:
-    uses: ./.github/workflows/terraform.yaml
+    uses: ./.github/workflows/terraform.yml
     with:
       working_directory: s3_bucket
       tf_version: '1.13.0'

@@ -97,7 +97,7 @@ jobs:
             run: terraform validate -no-color
 
           - name: Run Lint
-            uses: terraform-linters/setup-tflint@v4
+            uses: terraform-linters/setup-tflint@v6
             with:
               tflint_version: latest
 
@@ -157,7 +157,7 @@ jobs:
             continue-on-error: true
 
           - name: Upload Plan Artifact
-            uses: actions/upload-artifact@v4
+            uses: actions/upload-artifact@v6
             with:
               name: prod-tfplan
               path: ${{ env.TF_Working_Dir }}/prod.tfplan
@@ -234,7 +234,7 @@ jobs:
               TF_VAR_environment: prod
 
           - name: Download Plan Artifact
-            uses: actions/download-artifact@v4
+            uses: actions/download-artifact@v7
             with:
               name: prod-tfplan
               path: ${{ env.TF_Working_Dir }}

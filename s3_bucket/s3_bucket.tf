@@ -1,5 +1,5 @@
 module "aws_s3_bucket" {
-  source = "git::https://github.com/ochirdorj/infra-core-storage-s3-bucket-template.git?ref=b58b3848a563dc1ee67dda51200e6ef995a79029"
+  source = "git::https://github.com/ochirdorj/infra-core-storage-s3-bucket-template.git?ref=ae21e36804bd6160d6bae67945f269633a69fcb8"
 ##input variables##
 enable_logging = true
 bucket_name = "sandbox-use1-ap13-s3-testing-example"
@@ -13,7 +13,7 @@ bucket_versioning_status = "Suspended"
 object_lock_mode = "GOVERNANCE"
 years = "1"
 block_acls = true
-block_policy = trueЗ
+block_policy = true
 ignore_acls = true
 restrict_buckets = true
 enable_life_cycle_rules = false

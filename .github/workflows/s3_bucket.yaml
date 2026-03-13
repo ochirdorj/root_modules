@@ -18,6 +18,11 @@ concurrency:
   group: s3_bucket
   cancel-in-progress: true
 
+permissions:       
+  contents: read
+  pull-requests: write
+  id-token: write
+
 jobs:
   terraform:
     uses: ./.github/workflows/terraform.yml

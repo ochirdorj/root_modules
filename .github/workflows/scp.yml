@@ -1,21 +1,21 @@
-name: s3_bucket
+name: service control policy
 on:
   push:
     branches:
       - main
     paths:
-      - 's3_bucket/**'
-      - '.github/workflows/s3_bucket.yaml'
+      - 'scp/**'
+      - '.github/workflows/scp.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 's3_bucket/**'
-      - '.github/workflows/s3_bucket.yaml'
+      - 'scp/**'
+      - '.github/workflows/scp.yml'
   workflow_dispatch:
 
 concurrency:
-  group: s3_bucket
+  group: scp
   cancel-in-progress: true
 
 permissions:       

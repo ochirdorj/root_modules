@@ -253,3 +253,8 @@ jobs:
               echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
               echo "- **Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
               echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          
+          - name: Terraform destroy (Cleanup)
+            working-directory: ${{ env.TF_Working_Dir }}
+            run: terraform destroy -auto-approve -no-color
+            

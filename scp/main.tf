@@ -4,7 +4,7 @@ module "scp" {
   ##Input variables##
   scp_name = "EnforceTag"
   scp_description = "SCP to enforce resource tag"
-  scp_json_path = file("${path.module}/policies/tag_enforce_policy.json")
+  scp_json_path = file("${path.module}/policies/ec2_tag_policy.json")
   scp_type = "SERVICE_CONTROL_POLICY"
   include_root = false
   target_ou_names = ["Security"]

@@ -1,5 +1,5 @@
 module "scp" {
-  source = "git::https://github.com/ochirdorj/service_control_policy.git?ref=1887c1948c1e46c69ff9eee744aa8c5c8f98c510"
+  source = "git::https://github.com/ochirdorj/service_control_policy.git?ref=1bb18b9d7478305c03ef57c3e5c63a8a47908515"
 
   ##Input variables##
   scp_name = "EnforceTag"

@@ -5,13 +5,13 @@ on:
       - main
     paths:
       - 'vpc/**'
-      - '.github/workflows/vpc.yaml'
+      - '.github/workflows/vpc.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'vpc/**'
-      - '.github/workflows/vpc.yaml'
+      - '.github/workflows/vpc.yml'
   workflow_dispatch:
 
 concurrency:

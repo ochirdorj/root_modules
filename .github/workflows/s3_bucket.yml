@@ -5,13 +5,13 @@ on:
       - main
     paths:
       - 's3_bucket/**'
-      - '.github/workflows/s3_bucket.yaml'
+      - '.github/workflows/s3_bucket.yml'
   pull_request:
     branches:
       - main
     paths:
       - 's3_bucket/**'
-      - '.github/workflows/s3_bucket.yaml'
+      - '.github/workflows/s3_bucket.yml'
   workflow_dispatch:
 
 concurrency:

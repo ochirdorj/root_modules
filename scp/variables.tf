@@ -33,6 +33,7 @@ variable "target_ou_names" {
 variable "target_account_names" {
   type = list(string)
   description = "scp target account names, leave it blank, it you don't want to attach scp to account"
+  default = []
   
 }
 

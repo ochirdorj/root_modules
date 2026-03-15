@@ -10,7 +10,7 @@ variable "scp_description" {
 
 variable "scp_path" {
   type = string
-  default = "${path.module}/policies/tag_enforce_policy.json"
+  default = null
 }
 
 variable "scp_type" {

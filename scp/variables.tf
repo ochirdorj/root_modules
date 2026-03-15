@@ -10,7 +10,6 @@ variable "scp_description" {
 
 variable "scp_path" {
   type = string
-  default = null
 }
 
 variable "scp_type" {

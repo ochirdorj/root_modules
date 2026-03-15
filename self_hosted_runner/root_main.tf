@@ -1,35 +1,23 @@
 module "self_hosted" {
-  source = "./modules"
+  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=9caa17d954e17ecb4a888b93433501430c38768e"
 
 #Input variables
-image_id = "ami-05563ed679ef6325d"
-instance_type = ["t3.medium", "c5.large", "c6i.large"]
-tags = {
-  "Environment": "dev"
-  "Managed_By" : "terraform"
-  "Project": "project-13"
-  "Team": "ap13"
-  "Owner": "eenkhchuluun"
-}
-Environment = "shs"
-Managed_by = "terraform"
-Project = "ap13"
-Team = "DevOps"
-Owner = "eenkhchuluun"
-root_volume_size = 20
-vpc_id = "vpc-0918c0d670058725e"
-lambda_subnets = [
-  "subnet-0e82222f8b004da60",
-  "subnet-0eb6d8b023a990885"
-]
-region = "us-east-1"
-github_app_credentials_secret_name = "github-actions-app-credentials"
-github_owner = "aKumoProject-13"
-runner_labels = "self-hosted,linux,x64"
-launch_template = "github-runner-lt"
-create_spot_role = false
-stage_name = "dev"
-kms_key_arn = ""
+image_id = var.image_id
+instance_type = var.instance_type
+Environment = var.Environment
+Managed_by = var.Managed_by
+Project = var.Project
+Team = var.Team
+Owner = var.Owner
+root_volume_size = var.root_volume_size
+vpc_id = var.vpc_id
+lambda_subnets = var.lambda_subnets
+github_app_credentials_secret_name = var.github_app_credentials_secret_name
+runner_labels = var.runner_labels
+launch_template = var.launch_template
+create_spot_role = var.create_spot_role 
+stage_name = var.stage_name
+kms_key_arn = var.kms_key_arn
 }
 
 

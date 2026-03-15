@@ -1,5 +1,5 @@
 module "aws_s3_bucket" {
-  source = "git::https://github.com/ochirdorj/infra-core-storage-s3-bucket-template.git?ref=04afbd77fc5f628c88cbd1701d7e7aafebdb4abb"
+  source = "git::https://github.com/ochirdorj/infra-core-storage-s3-bucket-template.git?ref=8176012848de79694c73241ff517472720447d81"
 ##input variables##
 enable_logging = var.enable_logging
 bucket_name = var.bucket_name

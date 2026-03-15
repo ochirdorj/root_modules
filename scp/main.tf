@@ -4,7 +4,7 @@ module "scp" {
   ##Input variables##
   scp_name = var.scp_name
   scp_description = var.scp_description
-  scp_path = "${path.module}/policies/tag_enforce_policy.json"
+  scp_path = "${path.module}/${var.scp_path}"
   scp_type = var.scp_type
   include_root = var.include_root
   target_ou_names = var.target_ou_names

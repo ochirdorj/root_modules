@@ -1,0 +1,33 @@
+name: self_hosted_runner
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'self_hosted_runner/**'
+      - '.github/workflows/self_hosted_runner.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'self_hosted_runner/**'
+      - '.github/workflows/self_hosted_runner.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: self_hosted_runner
+  cancel-in-progress: true
+
+permissions:       
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform.yml
+    with:
+      working_directory: self_hosted_runner
+      tf_version: '1.13.0'
+      skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19'
+    secrets: inherit

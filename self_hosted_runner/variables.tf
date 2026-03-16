@@ -70,7 +70,7 @@ variable "github_app_credentials_secret_name" {
 variable "runner_labels" {
   type = string
   description = "runner labels"
-  default = "self-hosted,linux,x64"
+  default = "self-hosted, linux, x64"
 }
 
 variable "launch_template" {

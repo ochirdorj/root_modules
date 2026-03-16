@@ -35,3 +35,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Lambda
+self_hosted_runner/lambda_code_folder/node_modules/
+self_hosted_runner/function.zip

@@ -1,7 +1,8 @@
 module "self_hosted" {
-  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=256f74af8ba83a90595c5e4bfa4ea42d687b162e"
+  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=6ba221e2cee5967747028b87c90de9eebd3965e6"
 
 #Input variables
+lambda_zip_path = var.lambda_zip_path
 image_id = var.image_id
 instance_type = var.instance_type
 Environment = var.Environment

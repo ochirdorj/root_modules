@@ -1,4 +1,5 @@
 name: self_hosted_runner
+
 on:
   push:
     branches:
@@ -18,14 +19,17 @@ concurrency:
   group: self_hosted_runner
   cancel-in-progress: true
 
-permissions:       
+permissions:
   contents: read
   pull-requests: write
   id-token: write
 
 jobs:
+  # -------------------------------------------------------
+  # Job 1 - Build Lambda zip
+  # -------------------------------------------------------
   build-lambda:
-    name: Install Lambda Dependencies
+    name: Build Lambda
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -37,17 +41,50 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        working-directory: self_hosted/lambda_code_folder
+        working-directory: self_hosted_runner/lambda_code_folder
         run: npm install --production
+
+      - name: Zip lambda package
+        working-directory: self_hosted_runner/lambda_code_folder
+        run: zip -r ../function.zip .
 
       - name: Upload lambda artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lambda-dependencies
-          path: self_hosted/lambda_code_folder/
+          name: lambda-zip
+          path: self_hosted_runner/function.zip
           retention-days: 1
-          
+
+  # -------------------------------------------------------
+  # Job 2 - Download zip and cache for terraform job
+  # Needed because reusable workflow runs on a fresh runner
+  # -------------------------------------------------------
+  prep-terraform:
+    name: Prepare Terraform workspace
+    runs-on: ubuntu-latest
+    needs: build-lambda
+    steps:
+      - name: Download lambda artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lambda-zip
+          path: self_hosted_runner/
+
+      - name: Verify zip exists
+        run: ls -la self_hosted_runner/function.zip
+
+      - name: Cache zip for terraform job
+        uses: actions/cache/save@v4
+        with:
+          path: self_hosted_runner/function.zip
+          key: lambda-zip-${{ github.sha }}
+
+  # -------------------------------------------------------
+  # Job 3 - Terraform (reusable workflow)
+  # -------------------------------------------------------
   terraform:
+    name: Terraform
+    needs: prep-terraform
     uses: ./.github/workflows/terraform.yml
     with:
       working_directory: self_hosted_runner

@@ -53,7 +53,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-
+      - name: Restore Lambda zip cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ inputs.working_directory }}/function.zip
+          key: lambda-zip-${{ github.sha }}
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
         with:
@@ -110,7 +114,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-
+      - name: Restore Lambda zip cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ inputs.working_directory }}/function.zip
+          key: lambda-zip-${{ github.sha }}
+        continue-on-error: true 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
         with:
@@ -198,6 +207,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Restore Lambda zip cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ inputs.working_directory }}/function.zip
+          key: lambda-zip-${{ github.sha }}
+        continue-on-error: true   # silently skips for vpc, s3, scp workflows
+        
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
         with:

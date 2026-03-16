@@ -95,3 +95,9 @@ variable "kms_key_arn" {
   description = "KMS Key ARN for encrypting secrets (optional, but recommended)"
   default = null
 }
+
+variable "lambda_zip_path" {
+  type        = string
+  description = "Path to the pre-built Lambda zip file"
+  default = "${path.module}/lambda_code_folder/function.zip"
+}

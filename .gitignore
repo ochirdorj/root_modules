@@ -39,3 +39,5 @@ terraform.rc
 # Lambda
 self_hosted_runner/lambda_code_folder/node_modules/
 self_hosted_runner/function.zip
+
+.terraform.lock.hcl

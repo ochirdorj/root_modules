@@ -1,5 +1,5 @@
 module "self_hosted" {
-  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=9caa17d954e17ecb4a888b93433501430c38768e"
+  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=256f74af8ba83a90595c5e4bfa4ea42d687b162e"
 
 #Input variables
 image_id = var.image_id

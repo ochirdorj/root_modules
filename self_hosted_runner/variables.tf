@@ -99,5 +99,4 @@ variable "kms_key_arn" {
 variable "lambda_zip_path" {
   type        = string
   description = "Path to the pre-built Lambda zip file"
-  default = "${path.module}/lambda_code_folder/function.zip"
 }

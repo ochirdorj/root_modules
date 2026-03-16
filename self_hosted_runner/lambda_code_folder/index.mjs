@@ -74,8 +74,16 @@ usermod -aG docker $RUNNER_USER
 
 # 2. SETUP GITHUB RUNNER
 mkdir -p $RUNNER_DIR && cd $RUNNER_DIR
+// WITH THIS:
 latest_version=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\\1/')
-curl -o runner.tar.gz -L https://github.com/actions/runner/releases/download/v$latest_version/actions-runner-linux-x64-$latest_version.tar.gz
+for i in 1 2 3; do
+  curl -o runner.tar.gz -L --retry 3 --retry-delay 5 \\
+    https://github.com/actions/runner/releases/download/v$latest_version/actions-runner-linux-x64-$latest_version.tar.gz
+  tar tzf runner.tar.gz > /dev/null 2>&1 && break
+  echo "Download attempt $i failed, retrying..."
+  rm -f runner.tar.gz
+  sleep 10
+done
 tar xzf ./runner.tar.gz
 sudo ./bin/installdependencies.sh
 

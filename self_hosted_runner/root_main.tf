@@ -3,7 +3,6 @@ module "self_hosted" {
 
 #Input variables
 lambda_zip_path = "${path.module}/function.zip"
-image_id = var.image_id
 instance_type = var.instance_type
 Environment = var.Environment
 Managed_by = var.Managed_by

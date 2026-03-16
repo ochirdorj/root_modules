@@ -1,14 +1,8 @@
-  variable "image_id" {
-    type = string
-    description = "AMI image ID"
-    default = "ami-02dfbd4ff395f2a1b"
-  }
-
-  variable "instance_type" {
-    type = list(string)
-    description = "ec2 instance type"
-    default = ["t3.medium", "c5.large", "c6i.large"]
-  }
+variable "instance_type" {
+  type = list(string)
+  description = "ec2 instance type"
+  default = ["t3.medium", "c5.large", "c6i.large"]
+}
 
 variable "Environment" {
   type = string

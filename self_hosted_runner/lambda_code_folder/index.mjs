@@ -37,25 +37,49 @@ const getUserDataScript = (repoUrl, token, runId, extraLabels) => {
 exec > /var/log/user-data.log 2>&1
 set -x
 
-# 1. SETUP ENVIRONMENT
+RUNNER_USER="ubuntu"
 RUNNER_DIR="/home/ubuntu/actions-runner"
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# 2. INSTALL TOOLS — with retry on transient network failures
+# 1. INSTALL TOOLS
 for i in 1 2 3; do
   apt-get update -y && break
-  echo "apt-get update failed, retry $i"
   sleep 10
 done
-apt-get install -y unzip curl libicu-dev git build-essential nodejs
+apt-get install -y curl unzip git tar jq libicu-dev \
+  python3 python3-pip docker.io nodejs npm
 
-# 3. SETUP RUNNER
+# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+unzip -q /tmp/awscliv2.zip -d /tmp
+/tmp/aws/install
+rm -rf /tmp/aws /tmp/awscliv2.zip
+
+# Install Checkov
+pip3 install checkov --upgrade --break-system-packages
+
+# Install Terraform
+curl -fsSL https://releases.hashicorp.com/terraform/1.13.0/terraform_1.13.0_linux_amd64.zip -o /tmp/terraform.zip
+unzip -q /tmp/terraform.zip -d /usr/local/bin/
+chmod +x /usr/local/bin/terraform
+rm /tmp/terraform.zip
+
+# Install TFLint
+curl -fsSL https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+# Start Docker
+systemctl start docker
+systemctl enable docker
+usermod -aG docker $RUNNER_USER
+
+# 2. SETUP GITHUB RUNNER
 mkdir -p $RUNNER_DIR && cd $RUNNER_DIR
 latest_version=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\\1/')
 curl -o runner.tar.gz -L https://github.com/actions/runner/releases/download/v$latest_version/actions-runner-linux-x64-$latest_version.tar.gz
 tar xzf ./runner.tar.gz
+sudo ./bin/installdependencies.sh
 
-# 4. FORCE ENVIRONMENT FILES
+# 3. ENVIRONMENT
 cat <<EOT > .path
 /usr/local/bin
 /usr/bin
@@ -68,13 +92,13 @@ cat <<EOT > .env
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 EOT
 
-chown -R ubuntu:ubuntu $RUNNER_DIR
+chown -R $RUNNER_USER:$RUNNER_USER $RUNNER_DIR
 
-# 5. REGISTER AND START
-sudo -u ubuntu -E ./config.sh --url "${repoUrl}" --token "${token}" --labels "${labelList}" --unattended --replace
-sudo -u ubuntu -E ./run.sh &
+# 4. REGISTER AND START
+sudo -u $RUNNER_USER -E ./config.sh --url "${repoUrl}" --token "${token}" --labels "${labelList}" --unattended --replace
+sudo -u $RUNNER_USER -E ./run.sh &
 
-# 6. WATCHDOG — wait for runner to start, then shutdown when idle
+# 5. WATCHDOG
 timeout ${WATCHDOG_STARTUP_TIMEOUT}s bash -c 'until pgrep -x "Runner.Worker" > /dev/null; do sleep 5; done'
 IDLE_LIMIT=${WATCHDOG_IDLE_LIMIT}
 IDLE_COUNT=0

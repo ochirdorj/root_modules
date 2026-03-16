@@ -32,7 +32,9 @@ const log = (level, message, data = {}) => {
 
 // --- USERDATA GENERATOR ---
 const getUserDataScript = (repoUrl, token, runId, extraLabels) => {
-    const labelList = extraLabels ? `${extraLabels},run-${runId}` : `run-${runId}`;
+    const labelList = extraLabels 
+  ? `${extraLabels},run-${runId}`.split(',').map(l => l.trim()).join(',')
+  : `run-${runId}`;
     return `#!/bin/bash
 exec > /var/log/user-data.log 2>&1
 set -x

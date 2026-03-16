@@ -82,7 +82,7 @@ variable "launch_template" {
 variable "create_spot_role" {
   type = bool
   description = "enable or disable service linked role"
-  default = false
+  default = true
 }
 variable "stage_name" {
 type = string

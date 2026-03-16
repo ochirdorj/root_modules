@@ -1,5 +1,5 @@
 module "scp" {
-  source = "git::https://github.com/ochirdorj/service_control_policy.git?ref=1701ebcbf826068f862c7ec09d419b4adcc58a33"
+  source = "git::https://github.com/ochirdorj/service_control_policy.git?ref=81989452ad02538066b54f32ae9f947978755d60"
 
   ##Input variables##
   scp_name = var.scp_name

@@ -18,7 +18,6 @@ const SPOT_RETRY_ERRORS = [
 ];
 
 // --- STRUCTURED LOGGER ---
-// Initialized with empty context, populated once jobId/runId are known
 let logContext = {};
 const log = (level, message, data = {}) => {
     console.log(JSON.stringify({
@@ -31,10 +30,13 @@ const log = (level, message, data = {}) => {
 };
 
 // --- USERDATA GENERATOR ---
+// Dependencies are pre-installed in the AMI — only register and start the runner
 const getUserDataScript = (repoUrl, token, runId, extraLabels) => {
-    const labelList = extraLabels 
-  ? `${extraLabels},run-${runId}`.split(',').map(l => l.trim()).join(',')
-  : `run-${runId}`;
+    // Strip spaces around commas in labels
+    const labelList = extraLabels
+        ? `${extraLabels},run-${runId}`.split(',').map(l => l.trim()).join(',')
+        : `run-${runId}`;
+
     return `#!/bin/bash
 exec > /var/log/user-data.log 2>&1
 set -x
@@ -43,41 +45,12 @@ RUNNER_USER="ubuntu"
 RUNNER_DIR="/home/ubuntu/actions-runner"
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# 1. INSTALL TOOLS
-for i in 1 2 3; do
-  apt-get update -y && break
-  sleep 10
-done
-apt-get install -y curl unzip git tar jq libicu-dev \
-  python3 python3-pip docker.io nodejs npm
-
-# Install AWS CLI
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
-unzip -q /tmp/awscliv2.zip -d /tmp
-/tmp/aws/install
-rm -rf /tmp/aws /tmp/awscliv2.zip
-
-# Install Checkov
-pip3 install checkov --upgrade --break-system-packages
-
-# Install Terraform
-curl -fsSL https://releases.hashicorp.com/terraform/1.13.0/terraform_1.13.0_linux_amd64.zip -o /tmp/terraform.zip
-unzip -q /tmp/terraform.zip -d /usr/local/bin/
-chmod +x /usr/local/bin/terraform
-rm /tmp/terraform.zip
-
-# Install TFLint
-curl -fsSL https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-
-# Start Docker
-systemctl start docker
-systemctl enable docker
-usermod -aG docker $RUNNER_USER
-
-# 2. SETUP GITHUB RUNNER
+# 1. SETUP GITHUB RUNNER
 mkdir -p $RUNNER_DIR && cd $RUNNER_DIR
-// WITH THIS:
+
 latest_version=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\\1/')
+
+# Download with retry and archive validation
 for i in 1 2 3; do
   curl -o runner.tar.gz -L --retry 3 --retry-delay 5 \\
     https://github.com/actions/runner/releases/download/v$latest_version/actions-runner-linux-x64-$latest_version.tar.gz
@@ -86,10 +59,10 @@ for i in 1 2 3; do
   rm -f runner.tar.gz
   sleep 10
 done
-tar xzf ./runner.tar.gz
-sudo ./bin/installdependencies.sh
 
-# 3. ENVIRONMENT
+tar xzf ./runner.tar.gz
+
+# 2. ENVIRONMENT
 cat <<EOT > .path
 /usr/local/bin
 /usr/bin
@@ -104,15 +77,15 @@ EOT
 
 chown -R $RUNNER_USER:$RUNNER_USER $RUNNER_DIR
 
-# 4. REGISTER AND START
+# 3. REGISTER AND START
 sudo -u $RUNNER_USER -E ./config.sh --url "${repoUrl}" --token "${token}" --labels "${labelList}" --unattended --replace
 sudo -u $RUNNER_USER -E ./run.sh &
 
-# 5. WATCHDOG
-timeout ${WATCHDOG_STARTUP_TIMEOUT}s bash -c 'until pgrep -x "Runner.Worker" > /dev/null; do sleep 5; done'
-IDLE_LIMIT=${WATCHDOG_IDLE_LIMIT}
+# 4. WATCHDOG — shut down instance when job is done or idle too long
+timeout ${WATCHDOG_STARTUP_TIMEOUT}s bash -c 'until pgrep -x "Runner.Worker" > /dev/null; do sleep 5; done' || shutdown -h now
+
 IDLE_COUNT=0
-while [ $IDLE_COUNT -lt $IDLE_LIMIT ]; do
+while [ $IDLE_COUNT -lt ${WATCHDOG_IDLE_LIMIT} ]; do
   if pgrep -x "Runner.Worker" > /dev/null; then
     IDLE_COUNT=0
   else
@@ -120,6 +93,7 @@ while [ $IDLE_COUNT -lt $IDLE_LIMIT ]; do
   fi
   sleep 10
 done
+
 shutdown -h now
 `;
 };
@@ -189,13 +163,21 @@ const buildLaunchParams = ({ jobId, runId, repoUrl, token, selectedSubnet }) => 
     ).toString('base64');
 
     return {
-        LaunchTemplate: { LaunchTemplateName: process.env.LT_NAME },
+        LaunchTemplate: {
+            LaunchTemplateName: process.env.LT_NAME,
+            Version: '$Latest',        // Always use latest LT version
+        },
         MinCount: 1,
         MaxCount: 1,
-        ClientToken: `job-${jobId}`,               // Idempotency — AWS ignores duplicate requests
+        ClientToken: `job-${jobId}`,   // Idempotency — AWS ignores duplicate requests
         InstanceInitiatedShutdownBehavior: 'terminate',
-        SubnetId: selectedSubnet,
-        SecurityGroupIds: [process.env.SG_ID],
+        // Use NetworkInterfaces to avoid conflict with LT security groups
+        NetworkInterfaces: [{
+            DeviceIndex: 0,
+            SubnetId: selectedSubnet,
+            Groups: [process.env.SG_ID],
+            AssociatePublicIpAddress: false,
+        }],
         UserData: userData,
         TagSpecifications: [{
             ResourceType: "instance",
@@ -226,7 +208,7 @@ const launchInstance = async (baseParams, typeList) => {
                 log('WARN', `Spot capacity unavailable, trying next type`, { instanceType, error: error.name });
                 continue;
             }
-            throw error; // Unexpected error — rethrow immediately
+            throw error;
         }
     }
 
@@ -244,16 +226,13 @@ const launchInstance = async (baseParams, typeList) => {
 
 // --- MAIN HANDLER ---
 export const handler = async (event, context) => {
-    // Prevents Lambda from hanging if SDK keeps connections open
     context.callbackWaitsForEmptyEventLoop = false;
 
-    // Guard against Lambda timeout mid-execution
     if (context.getRemainingTimeInMillis() < LAMBDA_TIMEOUT_BUFFER_MS) {
         log('ERROR', 'Lambda timeout imminent, aborting before execution');
         return { statusCode: 500, body: 'Lambda timeout' };
     }
 
-    // Log SQS message ID for DLQ tracing
     const messageId = event.Records?.[0]?.messageId;
     if (messageId) log('INFO', 'Processing SQS message', { messageId });
 
@@ -267,13 +246,12 @@ export const handler = async (event, context) => {
     }
 
     // --- EXTRACT FIELDS ---
-    const jobId  = body.workflow_job?.id?.toString();
-    const runId  = body.workflow_job?.run_id?.toString();   // Fixed: removed unreliable fallback
+    const jobId   = body.workflow_job?.id?.toString();
+    const runId   = body.workflow_job?.run_id?.toString();
     const repoUrl = body.repository?.html_url;
-    const owner  = body.repository?.owner?.login;
-    const repo   = body.repository?.name;
+    const owner   = body.repository?.owner?.login;
+    const repo    = body.repository?.name;
 
-    // Set log context once fields are known
     logContext = { jobId, runId, owner, repo };
 
     // --- VALIDATE FIELDS ---
@@ -308,10 +286,9 @@ export const handler = async (event, context) => {
 
         // --- GITHUB TOKEN ---
         const token = await getRegistrationToken(owner, repo);
-        log('INFO', 'GitHub registration token obtained'); // Never log the token value
+        log('INFO', 'GitHub registration token obtained');
 
         // --- SUBNET SELECTION ---
-        // Deterministic selection based on jobId — same job always goes to same subnet
         const subnets = (process.env.SUBNET_IDS || '').split(',').filter(Boolean);
         if (subnets.length === 0) throw new Error('SUBNET_IDS environment variable is not set');
         const selectedSubnet = subnets[parseInt(jobId) % subnets.length];

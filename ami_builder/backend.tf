@@ -1,0 +1,8 @@
+terraform {
+  backend "s3" {
+    bucket = "ochirdorj-terraform-backend-bucket"
+    key = "infra/ami_builder/terraform.tfstate"
+    region = "us-east-1"
+    encrypt = true
+  }
+}

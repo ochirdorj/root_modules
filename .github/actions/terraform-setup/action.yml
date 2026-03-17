@@ -1,0 +1,60 @@
+name: Terraform Setup
+description: Setup Terraform, restore plugin cache, configure AWS credentials, and run terraform init
+
+inputs:
+  tf_version:
+    description: "Terraform version to install"
+    required: true
+  working_directory:
+    description: "Terraform working directory"
+    required: true
+  aws_role_arn:
+    description: "IAM role ARN to assume via OIDC"
+    required: true
+  aws_region:
+    description: "AWS region"
+    required: true
+  role_session_name:
+    description: "Role session name for AWS credentials"
+    required: false
+    default: GitHubActions-Terraform
+  run_upgrade:
+    description: "Pass -upgrade flag to terraform init (use only on first init per workflow)"
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85  # v4.0.0
+      with:
+        terraform_version: ${{ inputs.tf_version }}
+        terraform_wrapper: true
+
+    - name: Cache Terraform plugins
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
+      with:
+        path: |
+          ~/.terraform.d/plugin-cache
+          ${{ inputs.working_directory }}/.terraform
+        key: terraform-${{ runner.os }}-${{ hashFiles('**/.terraform.lock.hcl') }}
+        restore-keys: |
+          terraform-${{ runner.os }}-
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7  # v6.0.0
+      with:
+        role-to-assume: ${{ inputs.aws_role_arn }}
+        aws-region: ${{ inputs.aws_region }}
+        role-session-name: ${{ inputs.role_session_name }}
+
+    - name: Terraform Init
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        if [ "${{ inputs.run_upgrade }}" = "true" ]; then
+          terraform init -upgrade -reconfigure
+        else
+          terraform init -reconfigure
+        fi

@@ -90,8 +90,8 @@ variable "kms_key_arn" {
   default = null
 }
 
-variable "aws_region" {
-  description = "AWS region"
+variable "image_id" {
+  description = "AMI ID for the self hosted runner instances. "
   type        = string
-  default     = "us-east-1"
+  default     = ""
 }

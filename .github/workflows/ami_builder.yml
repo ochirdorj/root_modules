@@ -1,21 +1,21 @@
-name: vpc
+name: ami_builder
 on:
   push:
     branches:
       - main
     paths:
-      - 'vpc/**'
-      - '.github/workflows/vpc.yml'
+      - 'ami_builder/**'
+      - '.github/workflows/ami_builder.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 'vpc/**'
-      - '.github/workflows/vpc.yml'
+      - 'ami_builder/**'
+      - '.github/workflows/ami_builder.yml'
   workflow_dispatch:
 
 concurrency:
-  group: vpc
+  group: ami_builder
   cancel-in-progress: true
 
 permissions:       
@@ -27,7 +27,7 @@ jobs:
   terraform:
     uses: ./.github/workflows/terraform.yml
     with:
-      working_directory: vpc
+      working_directory: ami_builder
       tf_version: '1.13.0'
       skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19'
     secrets: inherit

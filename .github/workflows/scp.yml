@@ -30,4 +30,4 @@ jobs:
       working_directory: scp
       tf_version: '1.13.0'
       skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19'
-    secrets: inherit ##
+    secrets: inherit

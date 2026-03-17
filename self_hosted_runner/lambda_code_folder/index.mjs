@@ -162,33 +162,32 @@ const buildLaunchParams = ({ jobId, runId, repoUrl, token, selectedSubnet }) => 
         getUserDataScript(repoUrl, token, runId, process.env.GH_LABELS)
     ).toString('base64');
 
-    return {
-        LaunchTemplate: {
-            LaunchTemplateName: process.env.LT_NAME,
-            Version: '$Latest',        // Always use latest LT version
-        },
-        MinCount: 1,
-        MaxCount: 1,
-        ClientToken: `job-${jobId}`,   // Idempotency — AWS ignores duplicate requests
-        InstanceInitiatedShutdownBehavior: 'terminate',
-        // Use NetworkInterfaces to avoid conflict with LT security groups
-        NetworkInterfaces: [{
-            DeviceIndex: 0,
-            SubnetId: selectedSubnet,
-            Groups: [process.env.SG_ID],
-            AssociatePublicIpAddress: false,
-        }],
-        UserData: userData,
-        TagSpecifications: [{
-            ResourceType: "instance",
-            Tags: [
-                { Key: "Name",       Value: `Runner-Job-${jobId}` },
-                { Key: "GH_Job_ID",  Value: jobId },
-                { Key: "Team",       Value: "ap13" },
-                { Key: "ManagedBy",  Value: "GitHub-Runner-Manager" },
-            ],
-        }],
-    };
+return {
+    LaunchTemplate: {
+        LaunchTemplateName: process.env.LT_NAME,
+        Version: '$Latest',
+    },
+    MinCount: 1,
+    MaxCount: 1,
+    ClientToken: `job-${jobId}`,
+    InstanceInitiatedShutdownBehavior: 'terminate',
+    NetworkInterfaces: [{
+        DeviceIndex: 0,
+        SubnetId: selectedSubnet,
+        Groups: [process.env.SG_ID],
+        AssociatePublicIpAddress: false,
+    }],
+    UserData: userData,
+    TagSpecifications: [{
+        ResourceType: "instance",
+        Tags: [
+            { Key: "Name",      Value: `Runner-Job-${jobId}` },
+            { Key: "GH_Job_ID", Value: jobId },
+            { Key: "Team",      Value: "ap13" },
+            { Key: "ManagedBy", Value: "GitHub-Runner-Manager" },
+        ],
+    }],
+};
 };
 
 // --- LAUNCH SPOT WITH ON-DEMAND FALLBACK ---

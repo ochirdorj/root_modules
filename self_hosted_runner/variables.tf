@@ -89,3 +89,8 @@ variable "kms_key_arn" {
   description = "KMS Key ARN for encrypting secrets (optional, but recommended)"
   default = null
 }
+
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+}

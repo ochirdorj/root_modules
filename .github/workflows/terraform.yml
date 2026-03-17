@@ -156,7 +156,7 @@ jobs:
 
   apply:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     needs: plan
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment:

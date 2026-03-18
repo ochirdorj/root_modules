@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   security:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
@@ -45,7 +45,7 @@ jobs:
           skip_check: ${{ inputs.skip_check }}
 
   validate:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     timeout-minutes: 20
     needs: security
     steps:
@@ -87,7 +87,7 @@ jobs:
           tflint --recursive --format=compact
 
   plan:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     timeout-minutes: 30
     needs: validate
     steps:
@@ -163,7 +163,7 @@ jobs:
         run: exit 1
 
   apply:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     timeout-minutes: 60
     needs: plan
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'

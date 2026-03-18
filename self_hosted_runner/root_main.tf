@@ -20,4 +20,6 @@ stage_name = var.stage_name
 kms_key_arn = var.kms_key_arn
 aws_region = var.aws_region
 image_id = var.image_id
+webhook_lambda_zip_path = var.webhook_lambda_zip_path
+webhook_secret_key      = var.webhook_secret_key
 }

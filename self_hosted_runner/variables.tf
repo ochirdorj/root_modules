@@ -96,8 +96,19 @@ variable "image_id" {
   default     = "ami-01f3bee89838bc457"
 }
 
-variable "aws_region" {
+variable "webhook_lambda_zip_path" {
   type        = string
-  description = "AWS region to deploy resources"
-  default     = "us-east-1"
+  description = "Path to the pre-built webhook validator Lambda zip file"
+  default     = "${path.module}/webhook_validator.zip"
+}
+
+variable "webhook_secret_key" {
+  type        = string
+  description = "Key name in the Secrets Manager JSON that holds the GitHub webhook secret"
+  default     = "webhook_secret"
+}
+
+variable "aws_region" {
+  type = string
+  description = "aws region"
 }

@@ -99,7 +99,7 @@ variable "image_id" {
 variable "webhook_lambda_zip_path" {
   type        = string
   description = "Path to the pre-built webhook validator Lambda zip file"
-  default     = "${path.module}/webhook_validator.zip"
+  default     = "./webhook_validator.zip"
 }
 
 variable "webhook_secret_key" {

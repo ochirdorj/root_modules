@@ -1,5 +1,5 @@
 module "self_hosted" {
-  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=1841914124745c4d8eeaf391e85e06ba80aff6a9"
+  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=5aae95c4f7c5cb35adb52ee922354ae3ae120bae"
 
 #Input variables
 lambda_zip_path = "${path.module}/function.zip"
@@ -19,4 +19,5 @@ create_spot_role = var.create_spot_role
 stage_name = var.stage_name
 kms_key_arn = var.kms_key_arn
 aws_region = var.aws_region
+image_id = var.image_id
 }

@@ -48,19 +48,25 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # 1. SETUP GITHUB RUNNER
 mkdir -p $RUNNER_DIR && cd $RUNNER_DIR
 
-latest_version=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\\1/')
+# Only download the runner if not already pre-installed in the AMI
+if [ ! -f "$RUNNER_DIR/config.sh" ]; then
+  latest_version=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\\1/')
 
-# Download with retry and archive validation
-for i in 1 2 3; do
-  curl -o runner.tar.gz -L --retry 3 --retry-delay 5 \\
-    https://github.com/actions/runner/releases/download/v$latest_version/actions-runner-linux-x64-$latest_version.tar.gz
-  tar tzf runner.tar.gz > /dev/null 2>&1 && break
-  echo "Download attempt $i failed, retrying..."
+  # Download with retry and archive validation
+  for i in 1 2 3; do
+    curl -o runner.tar.gz -L --retry 3 --retry-delay 5 \\
+      https://github.com/actions/runner/releases/download/v$latest_version/actions-runner-linux-x64-$latest_version.tar.gz
+    tar tzf runner.tar.gz > /dev/null 2>&1 && break
+    echo "Download attempt $i failed, retrying..."
+    rm -f runner.tar.gz
+    sleep 10
+  done
+
+  tar xzf ./runner.tar.gz
   rm -f runner.tar.gz
-  sleep 10
-done
-
-tar xzf ./runner.tar.gz
+else
+  echo "Runner binary already present in AMI, skipping download"
+fi
 
 # 2. ENVIRONMENT
 cat <<EOT > .path

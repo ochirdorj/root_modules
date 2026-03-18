@@ -1,5 +1,5 @@
 module "self_hosted" {
-  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=e51c83bd755d3f7e3dc517b374e8254b9498dd8c"
+  source = "git::https://github.com/ochirdorj/self_hosted_runner.git?ref=a969536ece625d4dc69ac30994c42f8b1dca9241"
 
   #Input variables
   lambda_zip_path                    = "${path.module}/function.zip"

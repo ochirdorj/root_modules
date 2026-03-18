@@ -107,8 +107,3 @@ variable "webhook_secret_key" {
   description = "Key name in the Secrets Manager JSON that holds the GitHub webhook secret"
   default     = "webhook_secret"
 }
-
-variable "aws_region" {
-  type        = string
-  description = "aws region"
-}

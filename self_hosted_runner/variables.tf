@@ -1,53 +1,53 @@
 variable "instance_type" {
-  type = list(string)
+  type        = list(string)
   description = "ec2 instance type"
-  default = ["t3.medium", "c5.large", "c6i.large"]
+  default     = ["t3.medium", "c5.large", "c6i.large"]
 }
 
 variable "Environment" {
-  type = string
+  type        = string
   description = "tag for asg"
-  default = "sandbox"
+  default     = "sandbox"
 }
 
 variable "Managed_by" {
-  type = string
+  type        = string
   description = "Managed by tag"
-  default = "terraform"
+  default     = "terraform"
 }
 
 variable "Project" {
-  type = string
+  type        = string
   description = "tag for asg"
-  default = "project-13"
+  default     = "project-13"
 }
 
 variable "Team" {
-  type = string
+  type        = string
   description = "tag for asg"
-  default = "ap13"
+  default     = "ap13"
 }
 
 variable "Owner" {
-  type = string
+  type        = string
   description = "tag for asg"
-  default = "Tugsuu"
+  default     = "Tugsuu"
 }
 
 variable "root_volume_size" {
-  type = number
+  type        = number
   description = "size of ebs volume"
-  default = 20
+  default     = 20
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "VPC ID"
-  default = "vpc-0cbbdf4c84f9c79dd"
+  default     = "vpc-0cbbdf4c84f9c79dd"
 }
 
 variable "lambda_subnets" {
-  type = list(string)
+  type        = list(string)
   description = "private subnets"
   default = [
     "subnet-01f55f939b6b4de8d",
@@ -56,38 +56,38 @@ variable "lambda_subnets" {
 }
 
 variable "github_app_credentials_secret_name" {
-    type = string
-    description = "just leave it as is"
-    default = "self_hosted_runner"
-  }
+  type        = string
+  description = "just leave it as is"
+  default     = "self_hosted_runner"
+}
 
 variable "runner_labels" {
-  type = string
+  type        = string
   description = "runner labels"
-  default = "self-hosted, linux, x64"
+  default     = "self-hosted, linux, x64"
 }
 
 variable "launch_template" {
-  type = string
+  type        = string
   description = "name of the launch template"
-  default = "github-runner-lt"
+  default     = "github-runner-lt"
 }
 
 variable "create_spot_role" {
-  type = bool
+  type        = bool
   description = "enable or disable service linked role"
-  default = true
+  default     = true
 }
 variable "stage_name" {
-type = string
-description = "API Gateway stage name"  
-default = "dev"
+  type        = string
+  description = "API Gateway stage name"
+  default     = "dev"
 }
 
 variable "kms_key_arn" {
-  type = string
+  type        = string
   description = "KMS Key ARN for encrypting secrets (optional, but recommended)"
-  default = null
+  default     = null
 }
 
 variable "image_id" {
@@ -109,6 +109,6 @@ variable "webhook_secret_key" {
 }
 
 variable "aws_region" {
-  type = string
+  type        = string
   description = "aws region"
 }

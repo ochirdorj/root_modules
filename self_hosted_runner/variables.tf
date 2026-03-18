@@ -37,7 +37,7 @@ variable "Owner" {
 variable "root_volume_size" {
   type        = number
   description = "size of ebs volume"
-  default     = 20
+  default     = 30
 }
 
 variable "vpc_id" {

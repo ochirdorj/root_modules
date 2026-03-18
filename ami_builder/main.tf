@@ -8,7 +8,7 @@ data "terraform_remote_state" "vpc" {
 }
 
 module "ami_builder" {
-  source = "git::https://github.com/ochirdorj/ami_builder.git?ref=2fc35c9b6eb021b7e5c0d1d5a46e37efd99aa196"
+  source = "git::https://github.com/ochirdorj/ami_builder.git?ref=eb7982d750bfa7bdc2300ef160ac90f36d604a56"
 
   project       = var.project
   environment   = var.environment

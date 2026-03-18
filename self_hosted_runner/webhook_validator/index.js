@@ -50,6 +50,7 @@ function verifySignature(secret, rawBody, sigHeader) {
 }
 
 exports.handler = async (event) => {
+  console.log('Incoming headers:', JSON.stringify(event.headers));
   const sigHeader = event.headers?.['x-hub-signature-256'] ?? event.headers?.['X-Hub-Signature-256'];
 
   if (!sigHeader) {

@@ -99,7 +99,11 @@ jobs:
             ${{ inputs.working_directory }}/function.zip
             ${{ inputs.working_directory }}/webhook_validator.zip
           key: lambda-zip-${{ github.sha }}
-        continue-on-error: true
+
+      - name: Verify zips exist
+        run: |
+          ls -la ${{ inputs.working_directory }}/function.zip
+          ls -la ${{ inputs.working_directory }}/webhook_validator.zip
 
       - uses: ./.github/actions/terraform-setup
         with:
@@ -175,7 +179,11 @@ jobs:
             ${{ inputs.working_directory }}/function.zip
             ${{ inputs.working_directory }}/webhook_validator.zip
           key: lambda-zip-${{ github.sha }}
-        continue-on-error: true
+
+      - name: Verify zips exist
+        run: |
+          ls -la ${{ inputs.working_directory }}/function.zip
+          ls -la ${{ inputs.working_directory }}/webhook_validator.zip
 
       - uses: ./.github/actions/terraform-setup
         with:

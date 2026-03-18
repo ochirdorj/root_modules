@@ -30,7 +30,7 @@ jobs:
   # -------------------------------------------------------
   build-lambda:
     name: Build Lambda
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     timeout-minutes: 10
     steps:
       - name: Checkout code
@@ -68,7 +68,7 @@ jobs:
   # -------------------------------------------------------
   prep-terraform:
     name: Prepare Terraform workspace
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     timeout-minutes: 10
     needs: build-lambda
     steps:
@@ -100,4 +100,5 @@ jobs:
       working_directory: self_hosted_runner
       tf_version: '1.13.0'
       skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19'
+      runner: '["self-hosted", "linux", "x64"]'
     secrets: inherit

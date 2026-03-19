@@ -100,5 +100,4 @@ jobs:
       working_directory: self_hosted_runner
       tf_version: '1.13.0'
       skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19'
-      runner: '["self-hosted", "linux", "x64"]'
     secrets: inherit

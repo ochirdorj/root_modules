@@ -1,7 +1,7 @@
 # DYNAMODB — TERRAFORM STATE LOCK TABLE
 
 module "dynamodb" {
-  source = "git::https://github.com/ochirdorj/infra-core-database-dynamodb-template.git?ref=1b953cbe45825f9082eadc3bba63fad4521fd027"
+  source = "git::https://github.com/ochirdorj/infra-core-database-dynamodb-template.git?ref=ec2d5ed67fde77248c28b1fcca2eb326cc5ca05e"
 
   table_name   = var.table_name
   billing_mode = var.billing_mode

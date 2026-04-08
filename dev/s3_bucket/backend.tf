@@ -1,10 +1,4 @@
 terraform {
-  backend "local" {
-    path = "terraform.tfstate"
-  }
-}
-
-terraform {
   backend "s3" {
     bucket         = "ochirdorj-terraform-kubernetes-backend-bucket"
     key            = "dev/s3_bucket/terraform.tfstate"

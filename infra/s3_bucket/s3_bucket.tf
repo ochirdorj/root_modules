@@ -1,0 +1,37 @@
+module "aws_s3_bucket" {
+  source = "git::https://github.com/ochirdorj/infra-core-storage-s3-bucket-template.git?ref=83d50b6902d100cc86a36946dce1ec5d8bbd21b2"
+  ##input variables##
+  enable_logging                       = var.enable_logging
+  bucket_name                          = var.bucket_name
+  lock_object                          = var.lock_object
+  tag_Environment                      = var.tag_Environment
+  tag_Managed_By                       = var.tag_Managed_By
+  tag_Project                          = var.tag_Project
+  tag_Team                             = var.tag_Team
+  tag_Owner                            = var.tag_Owner
+  bucket_versioning_status             = var.bucket_versioning_status
+  object_lock_mode                     = var.object_lock_mode
+  years                                = var.years
+  block_acls                           = var.block_acls
+  block_policy                         = var.block_policy
+  ignore_acls                          = var.ignore_acls
+  restrict_buckets                     = var.restrict_buckets
+  enable_life_cycle_rules              = var.enable_life_cycle_rules
+  object_prefix                        = var.object_prefix
+  object_tag                           = var.object_tag
+  current_transition_days              = var.current_transition_days
+  current_transition_storage_class     = var.current_transition_storage_class
+  current_expiration_days              = var.current_expiration_days
+  non_current_transition_days          = var.non_current_transition_days
+  non_current_transition_storage_class = var.non_current_transition_storage_class
+  non_current_expiration_days          = var.non_current_expiration_days
+  enable_encryption                    = var.enable_encryption
+  sse_algorithm                        = var.sse_algorithm
+  kms_key_arn                          = var.kms_key_arn
+  transfer_acceleration                = var.transfer_acceleration
+  website_enable                       = var.website_enable
+  key_prefix_equals                    = var.key_prefix_equals
+  replace_key_prefix_with              = var.replace_key_prefix_with
+  enable_replication                   = var.enable_replication
+  replication_destination_bucket_arn   = var.replication_destination_bucket_arn
+}

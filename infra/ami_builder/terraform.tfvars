@@ -1,0 +1,2 @@
+project     = "ochirdorj"
+environment = "prod"

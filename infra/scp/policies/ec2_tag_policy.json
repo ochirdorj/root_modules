@@ -1,0 +1,100 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EnforceEnv",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "ecs:CreateCluster",
+        "eks:CreateCluster"
+      ],
+      "Resource": [
+        "arn:aws:ec2:*:*:instance/*",
+        "arn:aws:ecs:*:*:cluster/*",
+        "arn:aws:eks:*:*:cluster/*"
+      ],
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Environment": "true"
+        }
+      }
+    },
+    {
+      "Sid": "EnforceManagedBy",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "ecs:CreateCluster",
+        "eks:CreateCluster"
+      ],
+      "Resource": [
+        "arn:aws:ec2:*:*:instance/*",
+        "arn:aws:ecs:*:*:cluster/*",
+        "arn:aws:eks:*:*:cluster/*"
+      ],
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Managed_By": "true"
+        }
+      }
+    },
+    {
+      "Sid": "EnforceProject",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "ecs:CreateCluster",
+        "eks:CreateCluster"
+      ],
+      "Resource": [
+        "arn:aws:ec2:*:*:instance/*",
+        "arn:aws:ecs:*:*:cluster/*",
+        "arn:aws:eks:*:*:cluster/*"
+      ],
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Project": "true"
+        }
+      }
+    },
+    {
+      "Sid": "EnforceTeam",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "ecs:CreateCluster",
+        "eks:CreateCluster"
+      ],
+      "Resource": [
+        "arn:aws:ec2:*:*:instance/*",
+        "arn:aws:ecs:*:*:cluster/*",
+        "arn:aws:eks:*:*:cluster/*"
+      ],
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Team": "true"
+        }
+      }
+    },
+    {
+      "Sid": "EnforceOwner",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:RunInstances",
+        "ecs:CreateCluster",
+        "eks:CreateCluster"
+      ],
+      "Resource": [
+        "arn:aws:ec2:*:*:instance/*",
+        "arn:aws:ecs:*:*:cluster/*",
+        "arn:aws:eks:*:*:cluster/*"
+      ],
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Owner": "true"
+        }
+      }
+    }
+  ]
+}

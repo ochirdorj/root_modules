@@ -1,22 +1,22 @@
-name: s3_bucket
+name: s3_bucket_infra
 on:
   push:
     branches:
       - main
     paths:
-      - 's3_bucket/**'
-      - '.github/workflows/s3_bucket.yml'
+      - 'infra/s3_bucket/**'
+      - '.github/workflows/s3_bucket_infra.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 's3_bucket/**'
-      - '.github/workflows/s3_bucket.yml'
+      - 'infra/s3_bucket/**'
+      - '.github/workflows/s3_bucket_infra.yml'
   workflow_dispatch:
 
 concurrency:
-  group: s3_bucket
-  cancel-in-progress: true
+  group: s3_bucket_infra
+  cancel-in-progress: false
 
 permissions:       
   contents: read
@@ -25,9 +25,9 @@ permissions:
 
 jobs:
   terraform:
-    uses: ./.github/workflows/terraform.yml
+    uses: ./.github/workflows/terraform-infra.yml
     with:
-      working_directory: s3_bucket
+      working_directory: infra/s3_bucket
       tf_version: '1.13.0'
       skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19,CKV_AWS_28'
     secrets: inherit

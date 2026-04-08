@@ -1,0 +1,115 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EnforceEnvTag",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:CreateVpc",
+        "ec2:CreateSubnet",
+        "ec2:CreateVolume",
+        "rds:CreateDBInstance",
+        "lambda:CreateFunction",
+        "kms:CreateKey",
+        "sns:CreateTopic",
+        "sqs:CreateQueue",
+        "elasticfilesystem:CreateFileSystem",
+        "secretsmanager:CreateSecret"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Environment": "true"
+        }
+      }
+    },
+    {
+      "Sid": "EnforceManagedByTag",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:CreateVpc",
+        "ec2:CreateSubnet",
+        "ec2:CreateVolume",
+        "rds:CreateDBInstance",
+        "lambda:CreateFunction",
+        "kms:CreateKey",
+        "sns:CreateTopic",
+        "sqs:CreateQueue",
+        "elasticfilesystem:CreateFileSystem",
+        "secretsmanager:CreateSecret"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Managed_By": "true"
+        }
+      }
+    },
+    {
+      "Sid": "EnforceProjectTag",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:CreateVpc",
+        "ec2:CreateSubnet",
+        "ec2:CreateVolume",
+        "rds:CreateDBInstance",
+        "lambda:CreateFunction",
+        "kms:CreateKey",
+        "sns:CreateTopic",
+        "sqs:CreateQueue",
+        "elasticfilesystem:CreateFileSystem",
+        "secretsmanager:CreateSecret"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Project": "true"
+        }
+      }
+    },
+    {
+      "Sid": "EnforceTeamTag",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:CreateVpc",
+        "ec2:CreateSubnet",
+        "ec2:CreateVolume",
+        "rds:CreateDBInstance",
+        "lambda:CreateFunction",
+        "kms:CreateKey",
+        "sns:CreateTopic",
+        "sqs:CreateQueue",
+        "elasticfilesystem:CreateFileSystem",
+        "secretsmanager:CreateSecret"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Team": "true"
+        }
+      }
+    },
+    {
+      "Sid": "EnforceOwnerTag",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:CreateVpc",
+        "ec2:CreateSubnet",
+        "ec2:CreateVolume",
+        "rds:CreateDBInstance",
+        "lambda:CreateFunction",
+        "kms:CreateKey",
+        "sns:CreateTopic",
+        "sqs:CreateQueue",
+        "elasticfilesystem:CreateFileSystem",
+        "secretsmanager:CreateSecret"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "aws:RequestTag/Owner": "true"
+        }
+      }
+    }
+  ]
+}

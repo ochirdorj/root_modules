@@ -1,0 +1,33 @@
+name: s3_bucket_dev
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dev/s3_bucket/**'
+      - '.github/workflows/s3_bucket_dev.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dev/s3_bucket/**'
+      - '.github/workflows/s3_bucket_dev.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: s3_bucket_dev
+  cancel-in-progress: false
+
+permissions:       
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform-dev.yml
+    with:
+      working_directory: dev/s3_bucket
+      tf_version: '1.13.0'
+      skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19,CKV_AWS_28'
+    secrets: inherit

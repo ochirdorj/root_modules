@@ -34,4 +34,5 @@ module "aws_s3_bucket" {
   replace_key_prefix_with              = var.replace_key_prefix_with
   enable_replication                   = var.enable_replication
   replication_destination_bucket_arn   = var.replication_destination_bucket_arn
+  dynamodb_table_name                  = var.dynamodb_table_name
 }

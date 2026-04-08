@@ -1,0 +1,1 @@
+dynamodb_table_name = "eks-terraform-state-lock"

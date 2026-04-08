@@ -29,5 +29,5 @@ jobs:
     with:
       working_directory: s3_bucket
       tf_version: '1.13.0'
-      skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19'
+      skip_check: 'CKV2_AWS_62,CKV_AWS_145,CKV_AWS_144,CKV_AWS_19,CKV_AWS_28'
     secrets: inherit

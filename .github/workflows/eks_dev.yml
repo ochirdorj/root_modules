@@ -1,0 +1,49 @@
+name: eks_dev
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dev/eks/**'
+      - '.github/workflows/eks_dev.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dev/eks/**'
+      - '.github/workflows/eks_dev.yml'
+  workflow_dispatch:
+    inputs:
+      destroy:
+        description: 'Destroy resources?'
+        required: true
+        type: boolean
+        default: false
+  schedule:
+    - cron: '0 4 * * *'    # destroy every day 11pm CDT
+    - cron: '0 14 * * *'   # recreate every day 9am CDT
+
+concurrency:
+  group: eks_dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform-dev.yml
+    with:
+      working_directory: dev/eks
+      tf_version: '1.13.0'
+      skip_check: 'CKV_AWS_58,CKV_AWS_39,CKV_AWS_37,CKV_AWS_38'
+      destroy: >-
+        ${{
+          github.event.inputs.destroy == 'true' ||
+          (github.event_name == 'schedule' &&
+          github.event.schedule == '0 4 * * *')
+        }}
+    secrets: inherit

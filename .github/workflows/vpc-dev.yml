@@ -14,7 +14,12 @@ on:
       - 'dev/vpc/**'
       - '.github/workflows/vpc_dev.yml'
   workflow_dispatch:
-
+    inputs:
+      destroy:
+        description: 'Destroy resources?'
+        required: true
+        type: boolean
+        default: false
 concurrency:
   group: vpc_dev
   cancel-in-progress: false

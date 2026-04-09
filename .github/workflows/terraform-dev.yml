@@ -18,6 +18,10 @@ on:
         required: false
         type: string
         default: '["ubuntu-latest"]'
+      destroy:
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -229,3 +233,33 @@ jobs:
             triggered by: ${{ github.actor }}
             commit: ${{ github.sha }}
             run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  destroy:
+    runs-on: ${{ fromJSON(inputs.runner) }}
+    timeout-minutes: 60
+    needs: plan
+    if: github.event.inputs.destroy == 'true'
+    environment:
+      name: dev
+      url: https://console.aws.amazon.com
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - uses: ./.github/actions/terraform-setup
+        with:
+          tf_version: ${{ inputs.tf_version }}
+          working_directory: ${{ inputs.working_directory }}
+          aws_role_arn: ${{ secrets.DEV_ROLE_ARN }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          role_session_name: GitHubActions-TerraformDestroy
+
+      - name: destroy
+        working-directory: ${{ inputs.working_directory }}
+        run: terraform destroy -auto-approve -no-color
+
+      - name: summary
+        if: always()
+        run: |
+          echo "## Destroy — ${{ inputs.working_directory }}" >> $GITHUB_STEP_SUMMARY
+          echo "- status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY

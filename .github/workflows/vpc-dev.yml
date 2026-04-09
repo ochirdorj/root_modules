@@ -1,0 +1,34 @@
+name: vpc_dev
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dev/vpc/**'
+      - '.github/workflows/vpc_dev.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dev/vpc/**'
+      - '.github/workflows/vpc_dev.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: vpc_dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform-dev.yml
+    with:
+      working_directory: dev/vpc
+      tf_version: '1.13.0'
+      skip_check: 'CKV2_AWS_12,CKV_AWS_130'
+    secrets: inherit

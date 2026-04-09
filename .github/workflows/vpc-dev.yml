@@ -20,7 +20,10 @@ on:
         required: true
         type: boolean
         default: false
-        
+  schedule:
+    - cron: '0 23 * * *' # destroy everyday at 11 PM
+    - cron: '0 9 * * *' # recreate everyday at 9 AM
+
 concurrency:
   group: vpc_dev
   cancel-in-progress: false

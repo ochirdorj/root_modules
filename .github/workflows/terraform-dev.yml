@@ -237,7 +237,7 @@ jobs:
     runs-on: ${{ fromJSON(inputs.runner) }}
     timeout-minutes: 60
     needs: plan
-    if: github.event.inputs.destroy == 'true'
+    if: inputs.destroy == true
     environment:
       name: dev
       url: https://console.aws.amazon.com
@@ -263,3 +263,90 @@ jobs:
           echo "- status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "- triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "- commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: alert on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@4758fd2f0eab31f80897dc291e43c3867cce37bf
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ vars.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "terraform destroy failed - ${{ inputs.working_directory }}"
+          to: ${{ vars.MAIL_RECIPIENT }}
+          from: ${{ vars.MAIL_USERNAME }}
+          body: |
+            destroy failed for ${{ inputs.working_directory }}
+            triggered by: ${{ github.actor }}
+            commit: ${{ github.sha }}
+            run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  recreate:
+    runs-on: ${{ fromJSON(inputs.runner) }}
+    timeout-minutes: 60
+    needs: plan
+    if: >-
+      github.event_name == 'schedule' &&
+      github.event.schedule == '0 9 * * *'
+    environment:
+      name: dev
+      url: https://console.aws.amazon.com
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        with:
+          path: |
+            ${{ inputs.working_directory }}/function.zip
+            ${{ inputs.working_directory }}/webhook_validator.zip
+          key: lambda-zip-${{ github.sha }}
+        continue-on-error: true
+
+      - uses: ./.github/actions/terraform-setup
+        with:
+          tf_version: ${{ inputs.tf_version }}
+          working_directory: ${{ inputs.working_directory }}
+          aws_role_arn: ${{ secrets.DEV_ROLE_ARN }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          role_session_name: GitHubActions-TerraformRecreate
+
+      - id: vars
+        run: echo "artifact_name=${WORKING_DIR//\//-}-tfplan" >> $GITHUB_OUTPUT
+        env:
+          WORKING_DIR: ${{ inputs.working_directory }}
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: ${{ steps.vars.outputs.artifact_name }}
+          path: ${{ inputs.working_directory }}
+
+      - name: recreate
+        working-directory: ${{ inputs.working_directory }}
+        run: terraform apply -auto-approve -no-color dev.tfplan
+
+      - name: summary
+        if: always()
+        run: |
+          echo "## Recreate — ${{ inputs.working_directory }}" >> $GITHUB_STEP_SUMMARY
+          echo "- status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: alert on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@4758fd2f0eab31f80897dc291e43c3867cce37bf
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ vars.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "terraform recreate failed - ${{ inputs.working_directory }}"
+          to: ${{ vars.MAIL_RECIPIENT }}
+          from: ${{ vars.MAIL_USERNAME }}
+          body: |
+            recreate failed for ${{ inputs.working_directory }}
+            triggered by: ${{ github.actor }}
+            commit: ${{ github.sha }}
+            run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

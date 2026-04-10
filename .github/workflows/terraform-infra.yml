@@ -41,7 +41,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           soft_fail: false
 
-      - uses: bridgecrewio/checkov-action@f9b0a2206b0401cad02ac0a66be2a7934a5be838  # v12
+      - uses: bridgecrewio/checkov-action@002cd2e8cc0fe0535e6f364509e091c1a9870efa  # v12
         with:
           directory: ${{ inputs.working_directory }}
           framework: terraform

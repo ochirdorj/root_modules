@@ -41,5 +41,3 @@ jobs:
       tf_version: '1.13.0'
       skip_check: 'CKV2_AWS_12,CKV_AWS_130'
     secrets: inherit
-
-    ##terraform deploy vpc

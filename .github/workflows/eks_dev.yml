@@ -47,3 +47,5 @@ jobs:
           github.event.schedule == '0 4 * * *')
         }}
     secrets: inherit
+
+    ##terraform deploy eks

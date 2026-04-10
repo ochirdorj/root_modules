@@ -21,8 +21,8 @@ on:
         type: boolean
         default: false
   schedule:
-    - cron: '0 4 * * *'    # destroy every day 11pm CDT
-    - cron: '0 14 * * *'   # recreate every day 9am CDT
+    - cron: '5 4 * * *'    # destroy every day 11pm CDT
+    - cron: '5 14 * * *'   # recreate every day 9am CDT
 
 concurrency:
   group: eks_dev

@@ -12,7 +12,7 @@ data "terraform_remote_state" "vpc" {
 # EKS CLUSTER
 
 module "eks" {
-  source = "git::https://github.com/ochirdorj/infra-core-compute-eks-template.git?ref=62031a517e0f78fcaaafc6f6569eeb5631a1ea75"
+  source = "git::https://github.com/ochirdorj/infra-core-compute-eks-template.git?ref=70763dacc9d683700543f40a7546bae7e45a06d9"
 
   cluster_name        = var.cluster_name
   cluster_version     = var.cluster_version

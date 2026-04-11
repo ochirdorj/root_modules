@@ -59,9 +59,3 @@ variable "tags" {
     Owner       = "tugsuu"
   }
 }
-
-variable "sso_admin_role_arn" {
-  type        = string
-  description = "ARN of the SSO admin IAM role"
-  default     = "arn:aws:iam::087708765256:role/aws-reserved/sso.amazonaws.com/us-east-1/AWSReservedSSO_AWSAdministratorAccess_f6c25639ba818f2c"
-}

@@ -24,6 +24,4 @@ module "eks" {
   min_size            = var.min_size
   max_size            = var.max_size
   tags                = var.tags
-  sso_admin_role_arn  = var.sso_admin_role_arn
-
 }

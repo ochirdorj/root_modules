@@ -12,11 +12,12 @@ data "terraform_remote_state" "vpc" {
 # EKS CLUSTER
 
 module "eks" {
-  source = "git::https://github.com/ochirdorj/infra-core-compute-eks-template.git?ref=ca27d836ad88e0dd316b7a833757107a24d56f7c"
+  source = "git::https://github.com/ochirdorj/infra-core-compute-eks-template.git?ref=62031a517e0f78fcaaafc6f6569eeb5631a1ea75"
 
   cluster_name        = var.cluster_name
   cluster_version     = var.cluster_version
   private_subnet_ids  = data.terraform_remote_state.vpc.outputs.private_subnet_ids
+  vpc_id              = data.terraform_remote_state.vpc.outputs.vpc_id
   public_access_cidrs = var.public_access_cidrs
   instance_types      = var.instance_types
   capacity_type       = var.capacity_type

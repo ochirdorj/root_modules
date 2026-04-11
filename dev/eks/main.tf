@@ -12,7 +12,7 @@ data "terraform_remote_state" "vpc" {
 # EKS CLUSTER
 
 module "eks" {
-  source = "git::https://github.com/ochirdorj/infra-core-compute-eks-template.git?ref=4080916ea9e6f6945cf505075091c04d34c2d073"
+  source = "git::https://github.com/ochirdorj/infra-core-compute-eks-template.git?ref=26e9bfe5e76314d546e11ca6622d697ea717f48d"
 
   cluster_name        = var.cluster_name
   cluster_version     = var.cluster_version
@@ -24,4 +24,6 @@ module "eks" {
   min_size            = var.min_size
   max_size            = var.max_size
   tags                = var.tags
+  sso_admin_role_arn  = var.sso_admin_role_arn
+
 }

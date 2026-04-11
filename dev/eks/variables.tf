@@ -59,8 +59,3 @@ variable "tags" {
     Owner       = "tugsuu"
   }
 }
-
-variable "vpc_id" {
-  type        = string
-  description = "VPC ID for ALB controller"
-}

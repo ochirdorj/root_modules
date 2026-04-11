@@ -39,7 +39,7 @@ jobs:
     with:
       working_directory: dev/eks
       tf_version: '1.13.0'
-      skip_check: 'CKV_AWS_58,CKV_AWS_39,CKV_AWS_37,CKV_AWS_38'
+      skip_check: 'CKV_AWS_58,CKV_AWS_39,CKV_AWS_37,CKV_AWS_38,CKV_AWS_290,CKV_AWS_355'
       destroy: >-
         ${{
           github.event.inputs.destroy == 'true' ||

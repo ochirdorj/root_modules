@@ -21,8 +21,8 @@ on:
         type: boolean
         default: false
   schedule:
-    - cron: '5 4 * * *'    # destroy every day 11pm CDT
-    - cron: '5 14 * * *'   # recreate every day 9am CDT
+    - cron: '10 4 * * *'    # destroy every day 11pm CDT
+    - cron: '10 14 * * *'   # recreate every day 9am CDT
 
 concurrency:
   group: eks_dev
@@ -44,8 +44,6 @@ jobs:
         ${{
           github.event.inputs.destroy == 'true' ||
           (github.event_name == 'schedule' &&
-          github.event.schedule == '0 4 * * *')
+          github.event.schedule == '10 4 * * *')
         }}
     secrets: inherit
-
-    ##terraform deploy eks

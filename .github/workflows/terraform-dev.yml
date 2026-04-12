@@ -170,7 +170,6 @@ jobs:
     runs-on: ${{ fromJSON(inputs.runner) }}
     timeout-minutes: 60
     needs: plan
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment:
       name: dev
       url: https://console.aws.amazon.com

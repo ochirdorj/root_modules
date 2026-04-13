@@ -1,0 +1,49 @@
+name: monitoring_dev
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dev/monitoring/**'
+      - '.github/workflows/monitoring_dev.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'dev/monitoring/**'
+      - '.github/workflows/monitoring_dev.yml'
+  workflow_dispatch:
+    inputs:
+      destroy:
+        description: 'Destroy resources?'
+        required: true
+        type: boolean
+        default: false
+  schedule:
+    - cron: '30 4 * * *'    # destroy 11:30pm CDT
+    - cron: '30 14 * * *'   # recreate 9:30am CDT
+
+concurrency:
+  group: monitoring_dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  terraform:
+    uses: ./.github/workflows/terraform-dev.yml
+    with:
+      working_directory: dev/monitoring
+      tf_version: '1.13.0'
+      skip_check: 'CKV_AWS_338,CKV_AWS_158'
+      destroy: >-
+        ${{
+          github.event.inputs.destroy == 'true' ||
+          (github.event_name == 'schedule' &&
+          github.event.schedule == '30 4 * * *')
+        }}
+    secrets: inherit

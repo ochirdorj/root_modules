@@ -37,15 +37,15 @@ jobs:
     runs-on: ${{ fromJSON(inputs.runner) }}
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a721f2d6  # v1.0.3
+      - uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a771f2d6
         with:
           working_directory: ${{ inputs.working_directory }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           soft_fail: false
 
-      - uses: bridgecrewio/checkov-action@f9b0a2206b0401cad02ac0a66be2a7934a5be838  # v12
+      - uses: bridgecrewio/checkov-action@f9b0a2206b0401cad02ac0a66be2a7934a5be838
         with:
           directory: ${{ inputs.working_directory }}
           framework: terraform
@@ -57,9 +57,9 @@ jobs:
     timeout-minutes: 20
     needs: security
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
+      - uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
           path: |
             ${{ inputs.working_directory }}/function.zip
@@ -84,7 +84,7 @@ jobs:
         working-directory: ${{ inputs.working_directory }}
         run: terraform validate -no-color
 
-      - uses: terraform-linters/setup-tflint@b480b8fcdaa6f2c577f8e4fa799e89e756bb7c93  # v6.2.2
+      - uses: terraform-linters/setup-tflint@b480b8fcdaa6f2c577f8e4fa799e89e756bb7c93
         with:
           tflint_version: v0.55.0
 
@@ -99,9 +99,9 @@ jobs:
     timeout-minutes: 30
     needs: validate
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
+      - uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
           path: |
             ${{ inputs.working_directory }}/function.zip
@@ -133,13 +133,13 @@ jobs:
           echo "exitcode=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
         continue-on-error: true
 
-      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f  # v7.0.0
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: ${{ steps.vars.outputs.artifact_name }}
           path: ${{ inputs.working_directory }}/dev.tfplan
           retention-days: 5
 
-      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
         if: github.event_name == 'pull_request'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -170,13 +170,14 @@ jobs:
     runs-on: ${{ fromJSON(inputs.runner) }}
     timeout-minutes: 60
     needs: plan
+    if: inputs.destroy != true
     environment:
       name: dev
       url: https://console.aws.amazon.com
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
+      - uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
           path: |
             ${{ inputs.working_directory }}/function.zip
@@ -197,7 +198,7 @@ jobs:
         env:
           WORKING_DIR: ${{ inputs.working_directory }}
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: ${{ steps.vars.outputs.artifact_name }}
           path: ${{ inputs.working_directory }}
@@ -205,6 +206,14 @@ jobs:
       - name: apply
         working-directory: ${{ inputs.working_directory }}
         run: terraform apply -auto-approve -no-color dev.tfplan
+
+      - name: deploy sample app
+        if: inputs.working_directory == 'dev/eks'
+        run: |
+          aws eks update-kubeconfig \
+              --name dev-eks-cluster \
+              --region us-east-1
+          kubectl apply -f https://raw.githubusercontent.com/ochirdorj/k8s-manifests/main/sample-app/sample-app.yml
 
       - name: summary
         if: always()
@@ -216,7 +225,7 @@ jobs:
 
       - name: alert on failure
         if: failure()
-        uses: dawidd6/action-send-mail@4758fd2f0eab31f80897dc291e43c3867cce37bf  # v15
+        uses: dawidd6/action-send-mail@4758fd2f0eab31f80897dc291e43c3867cce37bf
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -228,21 +237,10 @@ jobs:
           from: ${{ vars.MAIL_USERNAME }}
           body: |
             apply failed for ${{ inputs.working_directory }}
-
             triggered by: ${{ github.actor }}
             commit: ${{ github.sha }}
             run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      - name: apply
-        working-directory: ${{ inputs.working_directory }}
-        run: terraform apply -auto-approve -no-color dev.tfplan
 
-      - name: deploy sample app
-        if: inputs.working_directory == 'dev/eks' && inputs.destroy != true
-        run: |
-          aws eks update-kubeconfig \
-              --name dev-eks-cluster \
-              --region us-east-1
-          kubectl apply -f https://raw.githubusercontent.com/ochirdorj/k8s-manifests/main/sample-app/sample-app.yml
   destroy:
     runs-on: ${{ fromJSON(inputs.runner) }}
     timeout-minutes: 60
@@ -288,75 +286,6 @@ jobs:
           from: ${{ vars.MAIL_USERNAME }}
           body: |
             destroy failed for ${{ inputs.working_directory }}
-            triggered by: ${{ github.actor }}
-            commit: ${{ github.sha }}
-            run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-  recreate:
-    runs-on: ${{ fromJSON(inputs.runner) }}
-    timeout-minutes: 60
-    needs: plan
-    if: >-
-      github.event_name == 'schedule' &&
-      github.event.schedule == '0 9 * * *'
-    environment:
-      name: dev
-      url: https://console.aws.amazon.com
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-
-      - uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
-        with:
-          path: |
-            ${{ inputs.working_directory }}/function.zip
-            ${{ inputs.working_directory }}/webhook_validator.zip
-          key: lambda-zip-${{ github.sha }}
-        continue-on-error: true
-
-      - uses: ./.github/actions/terraform-setup
-        with:
-          tf_version: ${{ inputs.tf_version }}
-          working_directory: ${{ inputs.working_directory }}
-          aws_role_arn: ${{ secrets.DEV_ROLE_ARN }}
-          aws_region: ${{ secrets.AWS_REGION }}
-          role_session_name: GitHubActions-TerraformRecreate
-
-      - id: vars
-        run: echo "artifact_name=${WORKING_DIR//\//-}-tfplan" >> $GITHUB_OUTPUT
-        env:
-          WORKING_DIR: ${{ inputs.working_directory }}
-
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-        with:
-          name: ${{ steps.vars.outputs.artifact_name }}
-          path: ${{ inputs.working_directory }}
-
-      - name: recreate
-        working-directory: ${{ inputs.working_directory }}
-        run: terraform apply -auto-approve -no-color dev.tfplan
-
-      - name: summary
-        if: always()
-        run: |
-          echo "## Recreate — ${{ inputs.working_directory }}" >> $GITHUB_STEP_SUMMARY
-          echo "- status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "- triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-          echo "- commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-
-      - name: alert on failure
-        if: failure()
-        uses: dawidd6/action-send-mail@4758fd2f0eab31f80897dc291e43c3867cce37bf
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ vars.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "terraform recreate failed - ${{ inputs.working_directory }}"
-          to: ${{ vars.MAIL_RECIPIENT }}
-          from: ${{ vars.MAIL_USERNAME }}
-          body: |
-            recreate failed for ${{ inputs.working_directory }}
             triggered by: ${{ github.actor }}
             commit: ${{ github.sha }}
             run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

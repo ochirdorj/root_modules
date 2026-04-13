@@ -20,9 +20,6 @@ on:
         required: true
         type: boolean
         default: false
-  schedule:
-    - cron: '0 4 * * *' # destroy everyday at 11 PM
-    - cron: '0 14 * * *' # recreate everyday at 9 AM
 
 concurrency:
   group: vpc_dev
@@ -40,4 +37,5 @@ jobs:
       working_directory: dev/vpc
       tf_version: '1.13.0'
       skip_check: 'CKV2_AWS_12,CKV_AWS_130'
+      destroy: ${{ github.event.inputs.destroy == 'true' }}
     secrets: inherit

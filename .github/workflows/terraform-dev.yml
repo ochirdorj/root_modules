@@ -232,6 +232,17 @@ jobs:
             triggered by: ${{ github.actor }}
             commit: ${{ github.sha }}
             run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: apply
+        working-directory: ${{ inputs.working_directory }}
+        run: terraform apply -auto-approve -no-color dev.tfplan
+
+      - name: deploy sample app
+        if: inputs.working_directory == 'dev/eks' && inputs.destroy != true
+        run: |
+          aws eks update-kubeconfig \
+              --name dev-eks-cluster \
+              --region us-east-1
+          kubectl apply -f https://raw.githubusercontent.com/ochirdorj/k8s-manifests/main/sample-app/sample-app.yml
   destroy:
     runs-on: ${{ fromJSON(inputs.runner) }}
     timeout-minutes: 60

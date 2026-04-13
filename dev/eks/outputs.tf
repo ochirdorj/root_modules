@@ -24,3 +24,13 @@ output "node_group_name" {
   description = "Name of the node group"
   value       = module.eks.node_group_name
 }
+
+output "oidc_provider_arn" {
+  description = "ARN of the EKS OIDC provider"
+  value       = module.eks.oidc_provider_arn
+}
+
+output "oidc_provider_url" {
+  description = "URL of the EKS OIDC provider"
+  value       = module.eks.oidc_provider_url
+}

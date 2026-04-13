@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a771f2d6
+      - uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a721f2d6
         with:
           working_directory: ${{ inputs.working_directory }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

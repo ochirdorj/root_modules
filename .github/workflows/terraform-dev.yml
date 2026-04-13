@@ -260,10 +260,19 @@ jobs:
           aws_region: ${{ secrets.AWS_REGION }}
           role_session_name: GitHubActions-TerraformDestroy
 
+      - name: cleanup kubernetes resources    # ← ADD THIS BEFORE DESTROY
+        if: inputs.working_directory == 'dev/eks'
+        run: |
+          aws eks update-kubeconfig --name dev-eks-cluster --region us-east-1
+          kubectl delete ingress --all --all-namespaces || true
+          kubectl delete svc --field-selector spec.type=LoadBalancer --all-namespaces || true
+          echo "Waiting 60 seconds for ALB deletion..."
+          sleep 60
+
       - name: destroy
         working-directory: ${{ inputs.working_directory }}
         run: terraform destroy -auto-approve -no-color
-
+      
       - name: summary
         if: always()
         run: |

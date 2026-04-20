@@ -82,7 +82,7 @@ jobs:
         run: ls -la self_hosted_runner/function.zip self_hosted_runner/webhook_validator.zip
 
       - name: Cache zips for terraform job
-        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306  # v5.0.3
+        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: |
             self_hosted_runner/function.zip
